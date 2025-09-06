@@ -2,7 +2,7 @@ import { GoogleGenAI, Type, Modality } from "@google/genai";
 import { GenerateResult, EditResult } from '../types';
 import { base64ToMimeAndData } from '../utils/imageUtils';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY! });
 
 const scenePromptSystemInstruction = `You are an expert in creating medical visual mnemonics specifically tailored for the Canadian Medical Council Qualifying Examination (MCCQE). Your task is to transform a medical topic into a powerful learning tool.
 
