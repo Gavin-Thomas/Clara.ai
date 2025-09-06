@@ -1,0 +1,38 @@
+/*
+- Body: #f8f9fa (Off-white)
+- Primary Text: #212529 (Dark Gray)
+- Secondary Text: #6c757d (Lighter Gray)
+- Accent/Primary: #0052cc (Professional Blue)
+- Accent Hover: #0041a3
+- Borders: #dee2e6 (Light Gray)
+- Card/Panel BG: #ffffff (White)
+- Input BG: #f1f3f5 (Very Light Gray)
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-sans: 'Inter', sans-serif;
+
+  --color-background: #f8f9fa;
+  --color-foreground: #212529;
+  --color-muted: #6c757d;
+
+  --color-primary: #0052cc;
+  --color-primary-hover: #0041a3;
+
+  --color-border: #dee2e6;
+  --color-card: #ffffff;
+  --color-input: #f1f3f5;
+
+  --border-radius: 0.75rem; /* 12px */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

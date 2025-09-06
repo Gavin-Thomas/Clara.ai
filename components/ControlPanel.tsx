@@ -1,5 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GenerateIcon, EditIcon } from './icons';
+
+// A more stylish button component
+const ActionButton: React.FC<{
+  onClick: () => void;
+  disabled: boolean;
+  children: React.ReactNode;
+  className?: string;
+  primary?: boolean;
+}> = ({ onClick, disabled, children, className = '', primary = false }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const baseStyle: React.CSSProperties = {
+    padding: '0.75rem 1rem',
+    borderRadius: 'var(--border-radius)',
+    fontWeight: '600',
+    transition: 'background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
+    width: '100%',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    opacity: disabled ? 0.6 : 1,
+    outline: 'none',
+    border: 'none',
+  };
+
+  const primaryStyle: React.CSSProperties = {
+    backgroundColor: isHovered && !disabled ? 'var(--color-primary-hover)' : 'var(--color-primary)',
+    color: 'white',
+  };
+
+  const secondaryStyle: React.CSSProperties = {
+    backgroundColor: isHovered && !disabled ? '#e9ecef' : 'transparent',
+    color: 'var(--color-primary)',
+    border: `1px solid var(--color-primary)`,
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      style={{ ...baseStyle, ...(primary ? primaryStyle : secondaryStyle) }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={className}
+    >
+      {children}
+    </button>
+  );
+};
 
 interface ControlPanelProps {
   medicalText: string;
@@ -22,53 +73,73 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   isLoading,
   hasImage,
 }) => {
+  const commonInputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '0.75rem',
+    backgroundColor: 'var(--color-input)',
+    border: '1px solid var(--color-border)',
+    borderRadius: 'var(--border-radius)',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+    color: 'var(--color-foreground)',
+  };
+
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col gap-6 h-fit sticky top-8">
+    <div
+      className="flex flex-col gap-6 h-fit sticky top-8 p-6"
+      style={{
+        backgroundColor: 'var(--color-card)',
+        borderRadius: 'var(--border-radius)',
+        border: `1px solid var(--color-border)`,
+        boxShadow: 'var(--shadow-md)',
+      }}
+    >
       <div>
-        <label htmlFor="medical-text" className="block text-md font-semibold mb-2 text-gray-800">
-          1. Enter Medical Topic
+        <label htmlFor="medical-text" className="block text-md font-semibold mb-2" style={{ color: 'var(--color-foreground)' }}>
+          1. Describe a Scene
         </label>
         <textarea
           id="medical-text"
           value={medicalText}
           onChange={(e) => setMedicalText(e.target.value)}
-          placeholder="e.g., Key features of Staphylococcus aureus..."
-          className="w-full h-48 p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ffcd00] focus:border-[#ffcd00] transition duration-200 resize-y text-gray-800 placeholder-gray-400"
+          placeholder="e.g., A mnemonic for remembering the Krebs cycle..."
+          className="resize-y"
+          style={{ ...commonInputStyle, height: '10rem' }}
           disabled={isLoading}
         />
-        <button
+        <ActionButton
           onClick={onGenerate}
           disabled={isLoading || !medicalText.trim()}
-          className="mt-4 w-full flex items-center justify-center gap-2 bg-[#d6001c] text-white font-bold py-3 px-4 rounded-lg hover:bg-[#b00016] transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#d6001c]"
+          primary
+          className="mt-4"
         >
           <GenerateIcon className="h-5 w-5" />
-          {isLoading && !hasImage ? 'Generating...' : (hasImage ? 'Regenerate Scene' : 'Generate Scene')}
-        </button>
+          {isLoading && !hasImage ? 'Generating...' : (hasImage ? 'Regenerate' : 'Generate')}
+        </ActionButton>
       </div>
 
       {hasImage && (
-        <div className="border-t border-gray-200 pt-6">
-          <label htmlFor="edit-text" className="block text-md font-semibold mb-2 text-gray-800">
+        <div className="border-t pt-6" style={{ borderColor: 'var(--color-border)' }}>
+          <label htmlFor="edit-text" className="block text-md font-semibold mb-1" style={{ color: 'var(--color-foreground)' }}>
             2. Edit Your Scene
           </label>
-          <p className="text-sm text-gray-500 mb-2">Describe a change to the image.</p>
+          <p className="text-sm mb-2" style={{ color: 'var(--color-muted)' }}>Describe a change to the image.</p>
           <input
             id="edit-text"
             type="text"
             value={editText}
             onChange={(e) => setEditText(e.target.value)}
-            placeholder="e.g., Add a golden crown to the pharaoh"
-            className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ffcd00] focus:border-[#ffcd00] transition duration-200 text-gray-800 placeholder-gray-400"
+            placeholder="e.g., Add a sun in the sky"
+            style={commonInputStyle}
             disabled={isLoading}
           />
-          <button
+          <ActionButton
             onClick={onEdit}
             disabled={isLoading || !editText.trim()}
-            className="mt-4 w-full flex items-center justify-center gap-2 bg-gray-800 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-900 transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800"
+            className="mt-4"
           >
             <EditIcon className="h-5 w-5" />
-            {isLoading ? 'Editing...' : 'Apply Edit'}
-          </button>
+            {isLoading ? 'Applying...' : 'Apply Edit'}
+          </ActionButton>
         </div>
       )}
     </div>
